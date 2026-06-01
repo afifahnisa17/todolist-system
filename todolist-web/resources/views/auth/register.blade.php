@@ -1,6 +1,15 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
+    <form method="POST" action="{{ route('register') }}" novalidate>
         @csrf
+        @if ($errors->any())
+            <div class="mb-4 rounded-md bg-red-50 p-4">
+                <ul class="text-sm text-red-600">
+                    @foreach ($errors->all() as $error)
+                        <li>• {{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
         <!-- Name -->
         <div>

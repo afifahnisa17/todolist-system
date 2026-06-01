@@ -2,63 +2,40 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Task;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
-    }
+        $userId = Auth::id();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+        $totalTasks = Task::where('user_id', $userId)->count();
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        $completedTasks = Task::where('user_id', $userId)
+            ->where('status', 'completed')
+            ->count();
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+        $inProgressTasks = Task::where('user_id', $userId)
+            ->where('status', 'in_progress')
+            ->count();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
+        $pendingTasks = Task::where('user_id', $userId)
+            ->where('status', 'pending')
+            ->count();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+        $recentTasks = Task::where('user_id', $userId)
+            ->latest()
+            ->take(5)
+            ->get();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return view('dashboard', compact(
+            'totalTasks',
+            'completedTasks',
+            'inProgressTasks',
+            'pendingTasks',
+            'recentTasks'
+        ));
     }
 }
