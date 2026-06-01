@@ -13,7 +13,7 @@
         <div class="card-body">
 
             <form method="POST"
-                  action="{{ route('tasks.store') }}">
+                    action="{{ route('tasks.store') }}">
 
                 @csrf
 
@@ -24,9 +24,9 @@
                     </label>
 
                     <input type="text"
-                           name="title"
-                           value="{{ old('title') }}"
-                           class="form-control">
+                        name="title"
+                        value="{{ old('title') }}"
+                        class="form-control">
 
                     @error('title')
                         <small class="text-danger">
@@ -62,9 +62,9 @@
                     </label>
 
                     <input type="date"
-                           name="task_date"
-                           value="{{ old('task_date') }}"
-                           class="form-control">
+                        name="task_date"
+                        value="{{ old('task_date') }}"
+                        class="form-control">
 
                     @error('task_date')
                         <small class="text-danger">
@@ -112,7 +112,7 @@
                 <div class="d-flex justify-content-end">
 
                     <a href="{{ route('tasks.index') }}"
-                       class="btn btn-secondary me-2">
+                        class="btn btn-secondary me-2">
                         Cancel
                     </a>
 

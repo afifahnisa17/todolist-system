@@ -25,9 +25,9 @@
                     </label>
 
                     <input type="text"
-                           name="title"
-                           value="{{ old('title', $task->title) }}"
-                           class="form-control">
+                        name="title"
+                        value="{{ old('title', $task->title) }}"
+                        class="form-control">
 
                     @error('title')
                         <small class="text-danger">
