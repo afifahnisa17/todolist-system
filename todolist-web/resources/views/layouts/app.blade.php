@@ -28,7 +28,7 @@
                     Dashboard
                 </a>
 
-                <a href="#"
+                <a href="{{ route('tasks.index') }}"
                    class="nav-link">
                     Tasks
                 </a>
