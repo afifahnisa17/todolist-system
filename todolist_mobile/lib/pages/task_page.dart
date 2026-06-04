@@ -11,19 +11,69 @@ class TaskPage extends StatefulWidget {
 class _TaskPageState extends State<TaskPage> {
 
   List tasks = [
-    {"title": "Belajar Flutter", "done": false},
-    {"title": "Bikin API Laravel", "done": true},
-    {"title": "Connect Flutter API", "done": false},
+    {
+      "title": "Belajar Flutter",
+      "description": "Mempelajari state management",
+      "date": DateTime.now(),
+      "status": "pending"
+    },
   ];
 
-  void _addTask(String title) {
+  void _addTask(String title, String desc, DateTime date, String status) {
     setState(() {
-      tasks.add({"title": title, "done": false});
+      tasks.add({
+        "title": title,
+        "description": desc,
+        "date": date,
+        "status": status,
+      });
     });
   }
 
+  void _toggleStatus(int index) {
+    setState(() {
+      final current = tasks[index]["status"];
+
+      tasks[index]["status"] =
+          current == "pending"
+              ? "in_progress"
+              : current == "in_progress"
+                  ? "completed"
+                  : "pending";
+    });
+  }
+
+  String formatDate(DateTime date) {
+    return "${date.day}/${date.month}/${date.year}";
+  }
+
+  Color statusColor(String status) {
+    switch (status) {
+      case "completed":
+        return Colors.green;
+      case "in_progress":
+        return Colors.orange;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  String statusLabel(String status) {
+    switch (status) {
+      case "completed":
+        return "Completed";
+      case "in_progress":
+        return "In Progress";
+      default:
+        return "Pending";
+    }
+  }
+
   void _showAddTask() {
-    final controller = TextEditingController();
+    final titleC = TextEditingController();
+    final descC = TextEditingController();
+    DateTime selectedDate = DateTime.now();
+    String status = "pending";
 
     showModalBottomSheet(
       context: context,
@@ -32,59 +82,130 @@ class _TaskPageState extends State<TaskPage> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-            top: 20,
-            left: 20,
-            right: 20,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-
-              const Text(
-                "Add Task",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+                top: 20,
+                left: 20,
+                right: 20,
               ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
 
-              const SizedBox(height: 10),
+                  const Text(
+                    "Add Task",
+                    style: TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
 
-              TextField(
-                controller: controller,
-                decoration: const InputDecoration(
-                  labelText: "Task name",
-                  border: OutlineInputBorder(),
-                ),
+                  const SizedBox(height: 10),
+
+                  // TITLE
+                  TextField(
+                    controller: titleC,
+                    decoration: const InputDecoration(
+                      labelText: "Title",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  // DESCRIPTION
+                  TextField(
+                    controller: descC,
+                    maxLines: 2,
+                    decoration: const InputDecoration(
+                      labelText: "Description",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  // DATE PICKER
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          "Date: ${formatDate(selectedDate)}",
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          final picked = await showDatePicker(
+                            context: context,
+                            initialDate: selectedDate,
+                            firstDate: DateTime(2020),
+                            lastDate: DateTime(2100),
+                          );
+
+                          if (picked != null) {
+                            setModalState(() {
+                              selectedDate = picked;
+                            });
+                          }
+                        },
+                        child: const Text("Pick Date"),
+                      )
+                    ],
+                  ),
+
+                  // STATUS DROPDOWN
+                  DropdownButtonFormField<String>(
+                    value: status,
+                    items: const [
+                      DropdownMenuItem(
+                          value: "pending", child: Text("Pending")),
+                      DropdownMenuItem(
+                          value: "in_progress", child: Text("In Progress")),
+                      DropdownMenuItem(
+                          value: "completed", child: Text("Completed")),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) {
+                        setModalState(() {
+                          status = value;
+                        });
+                      }
+                    },
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "Status",
+                    ),
+                  ),
+
+                  const SizedBox(height: 15),
+
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (titleC.text.isNotEmpty) {
+                          _addTask(
+                            titleC.text,
+                            descC.text,
+                            selectedDate,
+                            status,
+                          );
+                          Navigator.pop(context);
+                        }
+                      },
+                      child: const Text("Add Task"),
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+                ],
               ),
-
-              const SizedBox(height: 15),
-
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (controller.text.isNotEmpty) {
-                      _addTask(controller.text);
-                      Navigator.pop(context);
-                    }
-                  },
-                  child: const Text("Add"),
-                ),
-              ),
-
-              const SizedBox(height: 20),
-            ],
-          ),
+            );
+          },
         );
       },
     );
-  }
-
-  void _toggleTask(int index) {
-    setState(() {
-      tasks[index]["done"] = !tasks[index]["done"];
-    });
   }
 
   @override
@@ -92,12 +213,9 @@ class _TaskPageState extends State<TaskPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF6F7FB),
 
-      // APPBAR
       appBar: AppBar(
         title: const Text("Dashboard"),
         actions: [
-
-          // LOGOUT
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
@@ -112,22 +230,23 @@ class _TaskPageState extends State<TaskPage> {
         ],
       ),
 
-      // FLOAT BUTTON
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddTask,
         child: const Icon(Icons.add),
       ),
 
-      // BODY
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
 
-            const Text(
-              "My Tasks",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "My Tasks",
+                style: TextStyle(
+                    fontSize: 22, fontWeight: FontWeight.bold),
+              ),
             ),
 
             const SizedBox(height: 15),
@@ -153,33 +272,75 @@ class _TaskPageState extends State<TaskPage> {
                         )
                       ],
                     ),
-                    child: Row(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
 
-                        Icon(
-                          task["done"]
-                              ? Icons.check_circle
-                              : Icons.circle_outlined,
-                          color: task["done"] ? Colors.green : Colors.grey,
-                        ),
+                        // TITLE + STATUS
+                        Row(
+                          mainAxisAlignment:
+                              MainAxisAlignment.spaceBetween,
+                          children: [
 
-                        const SizedBox(width: 10),
-
-                        Expanded(
-                          child: Text(
-                            task["title"],
-                            style: TextStyle(
-                              fontSize: 16,
-                              decoration: task["done"]
-                                  ? TextDecoration.lineThrough
-                                  : null,
+                            Expanded(
+                              child: Text(
+                                task["title"],
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
-                          ),
+
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                color:
+                                    statusColor(task["status"])
+                                        .withOpacity(0.2),
+                                borderRadius:
+                                    BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                statusLabel(task["status"]),
+                                style: TextStyle(
+                                  color:
+                                      statusColor(task["status"]),
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
 
-                        IconButton(
-                          onPressed: () => _toggleTask(index),
-                          icon: const Icon(Icons.swap_horiz),
+                        const SizedBox(height: 6),
+
+                        // DESC
+                        Text(
+                          task["description"],
+                          style: const TextStyle(
+                              color: Colors.grey),
+                        ),
+
+                        const SizedBox(height: 6),
+
+                        // DATE
+                        Text(
+                          formatDate(task["date"]),
+                          style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey),
+                        ),
+
+                        const SizedBox(height: 10),
+
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: () => _toggleStatus(index),
+                            child: const Text("Change Status"),
+                          ),
                         )
                       ],
                     ),
