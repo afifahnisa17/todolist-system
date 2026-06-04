@@ -10,6 +10,8 @@
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 
+
+
     <style>
         .sidebar-shell {
             min-height: 100vh;
@@ -70,6 +72,7 @@
         }
     </style>
 </head>
+
 
 <body>
 
@@ -179,7 +182,10 @@
 
 </div>
 
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js"></script>
+@stack('scripts')
+
 
 </body>
 </html>

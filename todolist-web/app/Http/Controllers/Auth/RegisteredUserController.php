@@ -33,8 +33,20 @@ class RegisteredUserController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
+
+        if (strlen($request->password) < 8) {
+            throw ValidationException::withMessages([
+                'password' => 'Password atleast 8 character',
+            ]);
+        }
+
+        if ($request->password !== $request->password_confirmation) {
+            throw ValidationException::withMessages([
+                'password' => 'Password confirmation does not match',
+            ]);
+        }
+
 
         $user = User::create([
             'name' => $request->name,
@@ -46,6 +58,7 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
-    }
+        return redirect()->route('login')
+            ->with('success', 'Welcome');
+        }
 }

@@ -82,7 +82,7 @@
                         </td>
 
                         <td>
-                            <span class="text-secondary">{{ $task->task_date }}</span>
+                            <span class="text-secondary">{{ $task->task_date->format('d M Y') }}</span>
                         </td>
 
                         <td>
@@ -105,14 +105,14 @@
                                     Edit
                                 </a>
 
-                                <form action="{{ route('tasks.destroy', $task->id) }}" method="POST" class="d-inline">
+                                <form action="{{ route('tasks.destroy', $task->id) }}"
+                                    method="POST"
+                                    class="d-inline delete-form">
                                     @csrf
                                     @method('DELETE')
-                                    <button
-                                        type="submit"
-                                        class="btn btn-sm btn-outline-danger"
-                                        onclick="return confirm('Delete this task?')"
-                                    >
+
+                                    <button type="submit"
+                                            class="btn btn-sm btn-outline-danger">
                                         Delete
                                     </button>
                                 </form>
@@ -123,9 +123,6 @@
                     <tr>
                         <td colspan="4">
                             <div class="empty py-5">
-                                <div class="empty-img">
-                                    <img src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/static/illustrations/undraw_empty.svg" height="128" alt="No tasks">
-                                </div>
                                 <p class="empty-title">No tasks found</p>
                                 <p class="empty-subtitle text-secondary">
                                     Try changing your filter or create a new task to get started.
@@ -149,3 +146,38 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    document.querySelectorAll('.delete-form').forEach(form => {
+
+        form.addEventListener('submit', function (e) {
+
+            e.preventDefault();
+
+            Swal.fire({
+                title: 'Delete Task?',
+                text: 'This action cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Delete',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+
+            });
+
+        });
+
+    });
+
+});
+</script>
+@endpush

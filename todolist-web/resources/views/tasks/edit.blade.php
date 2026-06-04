@@ -64,7 +64,7 @@
 
                     <input type="date"
                             name="task_date"
-                            value="{{ old('task_date', $task->task_date) }}"
+                            value="{{ old('task_date', $task->task_date?->format('Y-m-d')) }}"
                             class="form-control">
 
                     @error('task_date')

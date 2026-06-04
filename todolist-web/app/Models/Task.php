@@ -14,8 +14,13 @@ class Task extends Model
         'status',
     ];
 
+
     public function user()
     {
         return $this->belongsTo(User::class);
     }
+
+    protected $casts = [
+        'task_date' => 'datetime',
+    ];
 }

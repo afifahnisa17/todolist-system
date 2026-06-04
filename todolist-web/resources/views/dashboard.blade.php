@@ -135,9 +135,6 @@
                     <tr>
                         <td colspan="3">
                             <div class="empty py-5">
-                                <div class="empty-img">
-                                    <img src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/static/illustrations/undraw_schedule.svg" height="128" alt="No tasks">
-                                </div>
                                 <p class="empty-title">No tasks found</p>
                                 <p class="empty-subtitle text-secondary">
                                     Create your first task to start filling this dashboard.
